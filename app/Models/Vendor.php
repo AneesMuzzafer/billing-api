@@ -9,7 +9,13 @@ class Vendor extends Model
 {
     use HasFactory;
 
-    public function node() {
+    public function node()
+    {
         $this->hasMany(Node::class);
+    }
+
+    public function service()
+    {
+        $this->hasMany(Service::class);
     }
 }

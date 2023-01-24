@@ -16,6 +16,11 @@ class Node extends Model
         return $this->belongsTo(Vendor::class);
     }
 
+    public function service()
+    {
+        return $this->hasMany(Service::class);
+    }
+
     public static function make($label, $region, $vendor, $cps, $connectedLinks, $alias)
     {
         $node = new Node;

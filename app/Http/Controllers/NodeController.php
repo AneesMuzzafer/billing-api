@@ -15,20 +15,7 @@ class NodeController extends Controller
 
     public function index()
     {
-        $nodes = Node::orderBy('created_at', 'asc')->get()->map(function ($node, $k) {
-
-            $data = json_decode($node->data);
-            return ([
-                'id' => $node->id,
-                'label' => $node->label,
-                'region' => $node->region,
-                'vendor' => $node->vendor_id,
-                'cps' => $data->cps ?? [],
-                'connectedLinks' => $data->connectedLinks ?? [],
-                'alias' => $data->alias ?? [],
-            ]);
-        });
-        return ["nodes" => $nodes];
+        return ["nodes" => NodeResource::collection(Node::orderBy('created_at', 'asc')->get())];
     }
 
     public function store(Request $request)
@@ -41,31 +28,12 @@ class NodeController extends Controller
 
         $node = Node::make($request->label, $request->region, $request->vendor, $request->cps, $request->connectedLinks, $request->alias);
 
-        $data = json_decode($node->data);
-        return ['node' => [
-            'id' => $node->id,
-            'label' => $node->label,
-            'region' => $node->region,
-            'vendor' => $node->vendor_id,
-            'cps' => $data->cps ?? [],
-            'connectedLinks' => $data->connectedLinks ?? [],
-            'alias' => $data->alias ?? [],
-        ]];
+        return ['node' => new NodeResource($node)];
     }
 
     public function show(Node $node)
     {
-        return new NodeResource($node);
-        // $data = json_decode($node->data);
-        // return ['node' => [
-        //     'id' => $node->id,
-        //     'label' => $node->label,
-        //     'region' => $node->region,
-        //     'vendor' => $node->vendor_id,
-        //     'cps' => $data->cps ?? [],
-        //     'connectedLinks' => $data->connectedLinks ?? [],
-        //     'alias' => $data->alias ?? [],
-        // ]];
+        return ['node' => new NodeResource($node)];
     }
 
     public function update(Node $node, Request $request)
@@ -87,17 +55,7 @@ class NodeController extends Controller
 
         $node->save();
 
-        $data = json_decode($node->data);
-        return ['node' => [
-            'id' => $node->id,
-            'label' => $node->label,
-            'region' => $node->region,
-            'vendor' => $node->vendor_id,
-            'lm' => 'Sanguine',
-            'cps' => $data->cps ?? [],
-            'connectedLinks' => $data->connectedLinks ?? [],
-            'alias' => $data->alias ?? [],
-        ]];
+        return ['node' => new NodeResource($node)];
     }
 
     public function destroy($id)
@@ -105,17 +63,7 @@ class NodeController extends Controller
         $node = Node::findOrFail($id);
         $node->delete();
 
-        $data = json_decode($node->data);
-        return ['node' => [
-            'id' => $node->id,
-            'label' => $node->label,
-            'region' => $node->region,
-            'vendor' => $node->vendor_id,
-            'lm' => 'Sanguine',
-            'cps' => $data->cps ?? [],
-            'connectedLinks' => $data->connectedLinks ?? [],
-            'alias' => $data->alias ?? [],
-        ]];
+        return ['node' => New NodeResource($node)];
     }
 
     public function import(Request $request)
@@ -127,6 +75,7 @@ class NodeController extends Controller
 
         foreach ($nodes as $node) {
             $node = (object) $node;
+
             $r = $saved->contains(function ($s) use ($node) {
                 return $s->label === $node->label;
             });
@@ -134,17 +83,10 @@ class NodeController extends Controller
             if ($r) {
                 return "{$node->label} has failed";
             }
+
             $node = Node::make($node->label, $node->region, $node->vendor, $node->cps, $node->connectedLinks, $node->alias);
-            $data = json_decode($node->data);
-            $newNodes[] =  [
-                'id' => $node->id,
-                'label' => $node->label,
-                'region' => $node->region,
-                'vendor' => $node->vendor_id,
-                'cps' => $data->cps ?? [],
-                'connectedLinks' => $data->connectedLinks ?? [],
-                'alias' => $data->alias ?? [],
-            ];
+
+            $newNodes[] = New NodeResource($node);
         }
 
         return ["nodes" => $newNodes];
