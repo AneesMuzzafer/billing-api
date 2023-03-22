@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\NodeController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\VendorController;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,29 +25,31 @@ Route::get('/test', function () {
     return "Alhumdullilah";
 });
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('/sign-in', [AuthController::class, 'signIn']);
 
-Route::prefix('nodes')->group(function () {
-    Route::get('/', [NodeController::class, 'index']);
-    Route::post('/', [NodeController::class, 'store']);
-    Route::post('/import', [NodeController::class, 'import']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/{node}', [NodeController::class, 'show']);
-    Route::put('/{node}', [NodeController::class, 'update']);
-    Route::delete('/{node}', [NodeController::class, 'destroy']);
-});
+    Route::prefix('nodes')->group(function () {
+        Route::get('/', [NodeController::class, 'index']);
+        Route::post('/', [NodeController::class, 'store']);
+        Route::post('/import', [NodeController::class, 'import']);
 
-Route::prefix('vendors')->group(function () {
-    Route::get('/', [VendorController::class, 'index']);
-});
+        Route::get('/{node}', [NodeController::class, 'show']);
+        Route::put('/{node}', [NodeController::class, 'update']);
+        Route::delete('/{node}', [NodeController::class, 'destroy']);
+    });
 
-Route::apiResource('services', ServiceController::class);
-Route::post('services/import', [ServiceController::class, 'import']);
+    Route::prefix('vendors')->group(function () {
+        Route::get('/', [VendorController::class, 'index']);
+    });
 
-Route::prefix('/bill')->group(function() {
-    Route::get('/', [BillController::class, 'index']);
-    Route::post('/', [BillController::class, 'store']);
-    Route::get('/export/{bill}', [BillController::class, 'export']);
+    Route::apiResource('services', ServiceController::class);
+    Route::post('services/import', [ServiceController::class, 'import']);
+
+    Route::prefix('/bill')->group(function () {
+        Route::get('/', [BillController::class, 'index']);
+        Route::post('/', [BillController::class, 'store']);
+        Route::get('/export/{bill}/{index}', [BillController::class, 'export']);
+    });
 });

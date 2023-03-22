@@ -11,8 +11,6 @@ use function PHPSTORM_META\map;
 
 class NodeController extends Controller
 {
-
-
     public function index()
     {
         return ["nodes" => NodeResource::collection(Node::orderBy('created_at', 'asc')->get())];

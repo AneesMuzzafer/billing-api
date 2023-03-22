@@ -102,7 +102,6 @@ class ServiceController extends Controller
 
         foreach ($services as $service) {
             $sc = (object) $service;
-            // dd($service);
 
             $r = $saved->contains(function ($s) use ($sc) {
                 return $s->cpNumber === $sc->cpNumber;
@@ -111,7 +110,6 @@ class ServiceController extends Controller
             if ($r) {
                 return "{$sc->name} has failed";
             }
-
 
             $service = new Service();
 

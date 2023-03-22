@@ -14,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return "unauthorized";
+    return "POWERGRID BILL UTILITY";
 });

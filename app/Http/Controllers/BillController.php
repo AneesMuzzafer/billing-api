@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BillExport;
 use App\Http\Resources\BillResource;
 use App\Models\Bill;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BillController extends Controller
 {
@@ -23,8 +25,8 @@ class BillController extends Controller
         return ['bill' => new BillResource($bill)];
     }
 
-    public function export(Bill $bill)
+    public function export(Bill $bill, $index)
     {
-        return "export" . $bill;
+        return Excel::download(new BillExport($bill, $index), 'bill.xlsx');
     }
 }

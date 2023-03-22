@@ -15,8 +15,6 @@ class Service extends Model
     {
         $service = new Service();
 
-        // dd($request);
-
         $service->vendor_id = (string)$request->vendor["id"];
         $service->node_id = (string)$request->node["id"];
         $service->name = $request->name;
