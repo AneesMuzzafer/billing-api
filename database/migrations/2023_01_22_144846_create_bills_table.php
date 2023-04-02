@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
 
-            $table->text('data')->nullable();
+            $table->longText('data')->nullable();
             $table->longText('meta')->nullable();
 
             $table->timestamps();
